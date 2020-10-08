@@ -13,10 +13,10 @@
 #define MSG_CONFIRM 0
 #define FAILED -1
 #define SUCCESS 0
-  
-// Код драйвера
+
 int main() {
     int sock;
+    // int message;
     char* message[LEN];
     struct sockaddr_in servaddr;
 
@@ -38,24 +38,32 @@ int main() {
 
     while (1)
     {
-        printf("Введите целое положительное число: ");
-        scanf("%s", message);
-        
-        if (atoi(message) < 0)
+        while (1)
         {
-            printf("Введите положительное целое число!\n");
+            printf("Введите целое положительное число (или 'stop' для завершения работы сервера): ");
+            scanf("%s", message);
+            
+            if (atoi(message) < 0)
+            {
+                printf("Введите положительное целое число!\n");
+            }
+            else
+            {
+                break;
+            }
         }
-        else
-        {
-            break;
-        }
-    }
-    
-    sendto(sockfd, (const char *)message, strlen(message),
+
+        sendto(sock, (const char *)message, strlen(message),
            MSG_CONFIRM, (const struct sockaddr *) &servaddr, 
            sizeof(servaddr));
 
-    printf("Число отправлено!\n");
+        if (strcmp(message, "stop") == 0)
+        {
+            break;
+        }
+
+        printf("Отправлено!\n");
+    }
     
     close(sock);
     return SUCCESS;
